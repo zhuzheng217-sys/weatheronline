@@ -1,0 +1,28 @@
+name: Daily Weather to WeCom
+
+on:
+  schedule:
+    # 北京时间每天 07:00（UTC 23:00）
+    - cron: "0 23 * * *"
+  workflow_dispatch:
+
+jobs:
+  push-weather:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Push weather forecast
+        env:
+          WECOM_WEBHOOK_KEY: ${{ secrets.WECOM_WEBHOOK_KEY }}
+          CITY: ${{ vars.CITY }}
+          TIMEZONE: ${{ vars.TIMEZONE }}
+          LAT: ${{ vars.LAT }}
+          LON: ${{ vars.LON }}
+        run: python scripts/weather_to_wecom.py
